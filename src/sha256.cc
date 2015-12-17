@@ -220,7 +220,7 @@ SHA256::update(const uint8_t *m, uint32_t ml)
 	if (nullptr == m)			return EMSHA_NULLPTR;
 
 	// If the SHA256 object is in a bad state, don't proceed.
-	if (EMSHA_ROK != this->hstatus)	return this->hstatus;
+	if (EMSHA_ROK != this->hstatus)		return this->hstatus;
 
 	// If the hash has been finalised, don't proceed.
 	if (0 != this->hcomplete)		return EMSHA_INVALID_STATE;
