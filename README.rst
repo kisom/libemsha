@@ -1,6 +1,9 @@
 libemsha
 ========
 
+.. image:: https://travis-ci.org/kisom/libemsha.svg?branch=master
+    :target: https://travis-ci.org/kisom/libemsha
+
 This library is an MIT-licensed HMAC-SHA-256 C++11 library designed
 for embedded systems. It is built following the JPL `Power of Ten
 <http://spinroot.com/gerard/pdf/P10.pdf>`_ rules. It was written in
