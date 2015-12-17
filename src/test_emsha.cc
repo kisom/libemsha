@@ -78,10 +78,13 @@ hash_equal_test(void)
 	}
 
 	if (!(emsha::hash_equal(a, b))) {
+		string	s;
 		cerr << "FAILED: hash_equal\n";
 		cerr << "\thash_equal should have succeeded comparing a and b.\n";
-		cerr << "\ta <- " << dump_hexstring(a, emsha::SHA256_HASH_SIZE) << std::endl;
-		cerr << "\tb <- " << dump_hexstring(b, emsha::SHA256_HASH_SIZE) << std::endl;
+		dump_hexstring(s, a, emsha::SHA256_HASH_SIZE);
+		cerr << "\ta <- " << s << std::endl;
+		dump_hexstring(s, b, emsha::SHA256_HASH_SIZE);
+		cerr << "\tb <- " << s << std::endl;
 		exit(1);
 	}
 
@@ -91,10 +94,13 @@ hash_equal_test(void)
 	}
 
 	if (emsha::hash_equal(a, b)) {
+		string	s;
 		cerr << "FAILED: hash_equal\n";
 		cerr << "\thash_equal should not have succeeded comparing a and b.\n";
-		cerr << "\ta <- " << dump_hexstring(a, emsha::SHA256_HASH_SIZE) << std::endl;
-		cerr << "\tb <- " << dump_hexstring(b, emsha::SHA256_HASH_SIZE) << std::endl;
+		dump_hexstring(s, a, emsha::SHA256_HASH_SIZE);
+		cerr << "\ta <- " << s << std::endl;
+		dump_hexstring(s, b, emsha::SHA256_HASH_SIZE);
+		cerr << "\tb <- " << s << std::endl;
 		exit(1);
 	}
 

@@ -38,18 +38,18 @@ using std::cerr;
 using std::endl;
 
 
-string
-dump_hexstring(uint8_t *s, uint32_t sl)
+void
+dump_hexstring(string& hs, uint8_t *s, uint32_t sl)
 {
 	uint32_t	 bl = (2 * sl) + 1;
 	char		*buf = new char[bl];
-	string		 hs;
+	string		 tmp;
 
 	memset(buf, 0, bl);
 	emsha::hexstring((uint8_t *)buf, s, sl);
-	hs = string(buf);
+	tmp = string(buf);
+	hs.swap(tmp);
 	delete[] buf;
-	return hs;
 }
 
 
@@ -72,7 +72,7 @@ run_hmac_test(struct hmac_test test, string label)
 			goto exit;
 		}
 
-		hs = dump_hexstring(dig, emsha::SHA256_HASH_SIZE);
+		dump_hexstring(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
 			res = emsha::EMSHA_TEST_FAILURE;
 			goto exit;
@@ -94,7 +94,7 @@ run_hmac_test(struct hmac_test test, string label)
 			goto exit;
 		}
 
-		hs = dump_hexstring(dig, emsha::SHA256_HASH_SIZE);
+		dump_hexstring(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
 			res = emsha::EMSHA_TEST_FAILURE;
 			goto exit;
@@ -111,7 +111,7 @@ run_hmac_test(struct hmac_test test, string label)
 		goto exit;
 	}
 
-	hs = dump_hexstring(dig, emsha::SHA256_HASH_SIZE);
+	dump_hexstring(hs, dig, emsha::SHA256_HASH_SIZE);
 	if (hs != test.output) {
 		cerr << "(comparing single pass function output)\n";
 		res = emsha::EMSHA_TEST_FAILURE;
@@ -165,7 +165,7 @@ run_hash_test(struct hash_test test, string label)
 			goto exit;
 		}
 
-		hs = dump_hexstring(dig, emsha::SHA256_HASH_SIZE);
+		dump_hexstring(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
 			res = emsha::EMSHA_TEST_FAILURE;
 			goto exit;
@@ -187,7 +187,7 @@ run_hash_test(struct hash_test test, string label)
 			goto exit;
 		}
 
-		hs = dump_hexstring(dig, emsha::SHA256_HASH_SIZE);
+		dump_hexstring(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
 			res = emsha::EMSHA_TEST_FAILURE;
 			goto exit;
@@ -203,7 +203,7 @@ run_hash_test(struct hash_test test, string label)
 		goto exit;
 	}
 
-	hs = dump_hexstring(dig, emsha::SHA256_HASH_SIZE);
+	dump_hexstring(hs, dig, emsha::SHA256_HASH_SIZE);
 	if (hs != test.output) {
 		cerr << "(comparing single pass function output)\n";
 		res = emsha::EMSHA_TEST_FAILURE;

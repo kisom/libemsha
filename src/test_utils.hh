@@ -59,8 +59,8 @@ struct hmac_test {
 
 
 // General-purpose debuggery.
-std::string	dump_hexstring(std::uint8_t *, std::uint32_t);
-void		dump_pair(std::uint8_t *, std::uint8_t *);
+void	dump_hexstring(std::string&, std::uint8_t *, std::uint32_t);
+void	dump_pair(std::uint8_t *, std::uint8_t *);
 
 
 // SHA-256 testing functions.

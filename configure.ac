@@ -1,10 +1,10 @@
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 AC_INIT([libemsha],
 	[1.0.0-RC1],
 	[coder@kyleisom.net],
 	[libemsha],
 	[https://kyleisom.net/projects/libemsha/])
-AM_INIT_AUTOMAKE([1.14 foreign])
+AM_INIT_AUTOMAKE([1.11 foreign])
 
 AC_CONFIG_SRCDIR([src/emsha/sha256.hh])
 AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/sphinx/source/conf.py])

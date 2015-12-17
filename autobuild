@@ -3,4 +3,5 @@
 CXX=g++
 command -v clang 2>&1 > /dev/null && CXX=clang++
 [ -d m4 ] || mkdir m4
-autoreconf -i && ./configure CXX=$CXX && make && make check
+autoreconf -i && ./configure --enable-silent-rules CXX=$CXX 	\
+	&& make && make check
