@@ -1,0 +1,37 @@
+#!/bin/sh
+
+echo '  ____    _    _   _  ____ _____ ____  '
+echo ' |  _ \  / \  | \ | |/ ___| ____|  _ \ '
+echo ' | | | |/ _ \ |  \| | |  _|  _| | |_) |'
+echo ' | |_| / ___ \| |\  | |_| | |___|  _ < '
+echo ' |____/_/   \_\_| \_|\____|_____|_| \_\'
+echo ''
+
+echo "[!] This script will destroy anything not tracked by git."
+echo "[!] Waiting 5 seconds before running. Press ^C to abort."
+
+echo -n "5"
+sleep 1
+echo -n " 4"
+sleep 1
+echo -n " 3"
+sleep 1
+echo -n " 2"
+sleep 1
+echo -n " 1"
+sleep 1
+echo " nuking from orbit!" 
+sleep 1
+
+echo ""
+git clean -fxd
+
+echo ""
+echo "-------------------------------------------------------------"
+echo "If you wish to make an apple pie from scratch, you must first"
+echo "create the universe."
+echo "				-- Carl Fucking Sagan"
+echo "-------------------------------------------------------------"
+echo ""
+./autobuild
+
