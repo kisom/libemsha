@@ -1,6 +1,8 @@
+# autoconf version 2.68 and automake version 1.11 seem to be the latest
+# versions that can be used with Travis right now.
 AC_PREREQ([2.68])
 AC_INIT([libemsha],
-	[1.0.0-RC1],
+	[1.0.0-RC2],
 	[coder@kyleisom.net],
 	[libemsha],
 	[https://kyleisom.net/projects/libemsha/])
@@ -8,6 +10,7 @@ AM_INIT_AUTOMAKE([1.11 foreign])
 
 AC_CONFIG_SRCDIR([src/emsha/sha256.hh])
 AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/sphinx/source/conf.py])
+AC_CONFIG_FILES([do-release], [chmod +x do-release])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CHECK_HEADERS

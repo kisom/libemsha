@@ -1,7 +1,7 @@
 language: cpp
 compiler:
-  - clang
-  - gcc
+- clang
+- gcc
 addons:
   apt:
     sources:
@@ -11,5 +11,5 @@ addons:
     - g++-4.8
     - clang
 install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-script: ./autobuild
+- if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+script: "./autobuild && ./do-release"
