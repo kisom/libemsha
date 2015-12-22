@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS =	-I m4
-SUBDIRS = doc src
+SUBDIRS =		src
 
 TESTS = src/emsha_core_test	\
 	src/emsha_sha256_test	\
