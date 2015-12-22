@@ -7,11 +7,11 @@ TESTS = src/emsha_core_test	\
 	src/emsha_mem_test	\
 	src/emsha_static_mem_test
 
-dist_data_DATA =   LICENSE		\
+dist_data_DATA =   LICENSE	\
 		   README.rst
-dist_noinst_DATA = autobuild		\
-		   doc/sphinx/source	\
-		   doc/sphinx/Makefile
+dist_noinst_DATA = autobuild	\
+		   doc/source	\
+		   doc/Makefile
 
 .PHONY: valgrind-check
 valgrind-check:
