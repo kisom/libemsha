@@ -3,11 +3,13 @@ libemsha
 ========
 
 Version: @PACKAGE_VERSION@
+
 Date:    @BUILD_DATE@
 
-------------------
-Table of Contents:
-------------------
+
+-----------------
+Table of Contents
+-----------------
 
 + Introduction
 + Getting and Building the Source

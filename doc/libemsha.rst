@@ -3,9 +3,13 @@ libemsha
 ========
 
 Version: 1.0.0-RC3
+
 Date:    2015-12-22
 
-Table of Contents:
+
+-----------------
+Table of Contents
+-----------------
 
 + Introduction
 + Getting and Building the Source
