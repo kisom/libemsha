@@ -10,6 +10,8 @@ addons:
     - gcc-4.8
     - g++-4.8
     - clang
+    - python-sphinx
+    - python-sphinx-rtd-theme
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 script: "./autobuild && ./do-release"
