@@ -16,7 +16,8 @@ libemsha_li_CPPFLAGS =		$(AM_CPPFLAGS) -Winline
 check_PROGRAMS =		emsha_sha256_test emsha_hmac_test	\
 				emsha_core_test emsha_mem_test		\
 				emsha_static_mem_test			\
-				emsha_static_sha_test
+				emsha_static_sha_test			\
+				emsha_static_hmac_test
 check_CPPFLAGS =		$(AM_CPPFLAGS) -Wnoinline
 
 # emsha_sha256_test runs through some SHA-256 test vectors, ensuring
@@ -40,22 +41,22 @@ emsha_core_test_LDADD =		libemsha.la
 emsha_mem_test_SOURCES =	test_mem.cc $(TEST_UTILS)
 emsha_mem_test_LDADD =		libemsha.la
 
-# emsha_static_mem_test is a statically compiled (e.g. not libtool'd)
-# test program whose stack can be more accurately measured.
 emsha_static_mem_test_SOURCES =	test_mem.cc emsha.cc sha256.cc hmac.cc $(TEST_UTILS)
 emsha_static_mem_test_CPPFLAGS = $(AM_CPPFLAGS) -static
 emsha_static_mem_test_LDFLAGS = $(AM_LDFLAGS) -static
 
-# emsha_static_mem_test is a statically compiled (e.g. not libtool'd)
-# test program whose stack can be more accurately measured.
 emsha_static_sha_test_SOURCES =	test_sha256.cc emsha.cc sha256.cc hmac.cc $(TEST_UTILS)
 emsha_static_sha_test_CPPFLAGS = $(AM_CPPFLAGS) -static
 emsha_static_sha_test_LDFLAGS = $(AM_LDFLAGS) -static
 
+emsha_static_hmac_test_SOURCES =	test_hmac.cc emsha.cc sha256.cc hmac.cc $(TEST_UTILS)
+emsha_static_hmac_test_CPPFLAGS =	$(AM_CPPFLAGS) -static
+emsha_static_hmac_test_LDFLAGS =	$(AM_LDFLAGS) -static
+
 
 .PHONY: valgrind-check
 valgrind-check: emsha_static_mem_test
-	valgrind --tool=massif -v emsha_mem_test ms_print
+	valgrind --tool=massif -v emsha_static_mem_test ms_print
 
 .PHONY: cloc-report
 cloc-report:

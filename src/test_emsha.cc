@@ -66,6 +66,8 @@ hexstring_test(void)
 #endif // #ifndef EMSHA_NO_HEXSTRING
 
 
+// TODO(kyle): build a test harness around this to verify times between
+// runs.
 static void
 hash_equal_test(void)
 {

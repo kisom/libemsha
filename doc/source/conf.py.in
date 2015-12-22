@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'@PACKAGE_NAME@'
-copyright = u'2015, @PACKAGE_AUTHOR@'
+copyright = u'2015, K. Isom <coder@kyleisom.net>'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -183,7 +183,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'PACKAGE_NAMEdoc'
+htmlhelp_basename = '@PACKAGE_NAME@doc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -203,8 +203,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'PACKAGE_NAME.tex', u'@PACKAGE\\_NAME@ Documentation',
-   u'@PACKAGE\\_AUTHOR@', 'manual'),
+  ('index', '@PACKAGE_NAME@.tex', u'@PACKAGE_NAME@ Documentation',
+   u'K. Isom <coder@kyleisom.net>', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -234,7 +234,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'package_name', u'@PACKAGE_NAME@ Documentation',
-     [u'@PACKAGE_AUTHOR@'], 1)
+     [u'K. Isom <coder@kyleisom.net>'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -247,9 +247,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'PACKAGE_NAME', u'@PACKAGE_NAME@ Documentation',
-   u'@PACKAGE_AUTHOR@', 'PACKAGE_NAME', 'One line description of project.',
-   'Miscellaneous'),
+  ('index', '@PACKAGE_NAME@', u'@PACKAGE_NAME@ Documentation',
+   u'K. Isom <coder@kyleisom.net>', '@PACKAGE_NAME@', 'HMAC-SHA-256 C++11 library designed for embedded systems.',
+   'Development'),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -269,9 +269,9 @@ texinfo_documents = [
 
 # Bibliographic Dublin Core info.
 epub_title = u'@PACKAGE_NAME@'
-epub_author = u'@PACKAGE_AUTHOR@'
-epub_publisher = u'@PACKAGE_AUTHOR@'
-epub_copyright = u'2015, @PACKAGE_AUTHOR@'
+epub_author = u'K. Isom <coder@kyleisom.net>'
+epub_publisher = u'K. Isom <coder@kyleisom.net>'
+epub_copyright = u'2015, K. Isom <coder@kyleisom.net>'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'@PACKAGE_NAME@'

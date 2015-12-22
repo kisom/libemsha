@@ -4,8 +4,8 @@ The SHA256 class
 
 .. cpp:class:: emsha::SHA256
 
-   SHA256 is an implementation of the :cpp:class:`emsha::Hash`
-   interface.
+   SHA256 is an implementation of the :cpp:class:`emsha::Hash` interface
+   implementing the SHA-256 cryptographic hash algorithm
 
 .. cpp:function:: SHA256::SHA256()
 		  
@@ -108,4 +108,5 @@ The SHA256 class
 
    * a ``uint32_t`` representing the expected size of buffers passed
      to ``result`` and ``finalize``.
+
 

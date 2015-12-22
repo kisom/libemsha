@@ -25,3 +25,5 @@ cloc-report:
 coverity-scan:
 	cd src && make $@
 
+epub:
+	cd doc && make $@

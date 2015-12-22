@@ -148,6 +148,19 @@ namespace emsha {
 	// hexstring writes a hex-encoded version of the src byte
 	// array into dest. The caller *must* ensure that dest is
 	// srclen * 2 bytes or longer.
+	//
+	// Inputs:
+	//
+	//     dest:   a byte array that is 2 * srclen.
+	//
+	//     src:    a byte array containing the data to process.
+	//
+	//     srclen: the size of src.
+	//
+	// Outputs:
+	//     
+	//     The hex-encoded string will be placed into dest.
+	//
 	void	hexstring(std::uint8_t *dest, std::uint8_t *src, std::uint32_t srclen);
 #endif // EMSHA_NO_HEXSTRING
 } // end of namespace emsha

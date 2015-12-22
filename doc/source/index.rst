@@ -6,29 +6,22 @@
 libemsha
 ========
 
-This library is an MIT-licensed compact HMAC-SHA-256 C++11 library
-designed for embedded systems. It is built following the JPL `Power of
-Ten <http://spinroot.com/gerard/pdf/P10.pdf>`_ rules.
-
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
-   building
    intro
+   building
+   overview
    hash
    sha256
    hmac
    misc
-
-
+   tests
+   refs
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
