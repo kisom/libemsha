@@ -5,8 +5,10 @@ set -e
 VERSION="@PACKAGE_VERSION@"
 TARBALL="@PACKAGE_NAME@-$VERSION"
 
-echo "[+] building release tarballs"
 make clean
+echo "[+] rebuilding single ReST doc"
+cd doc && make singlerst && cd ..
+echo "[+] building release tarballs"
 make dist-gzip 
 if [ ! -e "$TARBALL.tar.gz" ]
 then

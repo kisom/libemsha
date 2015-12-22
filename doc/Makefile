@@ -51,6 +51,9 @@ all:
 check:
 
 distclean: clean
+	rm -f source/header*.rst
+	rm -f source/conf.py
+
 clean:
 	rm -rf $(BUILDDIR)/*
 
@@ -182,3 +185,20 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+singlerst:
+	sed -e "s/@BUILD_DATE@/$$(date +'%Y-%m-%d')/" \
+		source/header.rst > source/header.dated.rst
+	cat 	source/header.dated.rst	\
+		source/intro.rst	\
+		source/building.rst	\
+		source/overview.rst	\
+		source/hash.rst		\
+		source/sha256.rst	\
+		source/hmac.rst		\
+		source/misc.rst		\
+		source/tests.rst	\
+		source/refs.rst		\
+		> libemsha.rst
+
+

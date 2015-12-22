@@ -9,7 +9,7 @@ AC_INIT([libemsha],
 AM_INIT_AUTOMAKE([1.11 foreign])
 
 AC_CONFIG_SRCDIR([src/emsha/sha256.hh])
-AC_CONFIG_FILES([Makefile src/Makefile doc/source/conf.py])
+AC_CONFIG_FILES([Makefile src/Makefile doc/source/conf.py doc/source/header.rst])
 AC_CONFIG_FILES([do-release], [chmod +x do-release])
 AC_CONFIG_MACRO_DIR([m4])
 

@@ -1,0 +1,22 @@
+========
+libemsha
+========
+
+Version: @PACKAGE_VERSION@
+Date:    @BUILD_DATE@
+
+------------------
+Table of Contents:
+------------------
+
++ Introduction
++ Getting and Building the Source
++ Library Overview
++ The Hash interface
++ The SHA256 class
++ The HMAC class
++ Miscellaneous functions
++ Test Programs
++ References
+
+
