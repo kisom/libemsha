@@ -106,6 +106,29 @@ hash_equal_test(void)
 		exit(1);
 	}
 
+	// This catches the bug in the initial version where the code was
+	//         res = a[i] ^ b[i];
+	// instead of
+	//         res += a[i] ^ b[i];
+	for (uint32_t i = 0; i < emsha::SHA256_HASH_SIZE; i++) {
+		a[i] = static_cast<uint8_t>(i);
+		b[i] = static_cast<uint8_t>(i+1);
+	}
+
+	b[emsha::SHA256_HASH_SIZE - 1]--;
+	if (emsha::hash_equal(a, b)) {
+		string	s;
+		cerr << "FAILED: hash_equal\n";
+		cerr << "\tREGRESSION: hash_equal should not have succeeded comparing a and b.\n";
+		dump_hexstring(s, a, emsha::SHA256_HASH_SIZE);
+		cerr << "\ta <- " << s << std::endl;
+		dump_hexstring(s, b, emsha::SHA256_HASH_SIZE);
+		cerr << "\tb <- " << s << std::endl;
+		exit(1);
+	}
+
+
+
 	cout << "PASSED: hash_equal\n";
 }
 

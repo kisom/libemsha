@@ -55,7 +55,7 @@ hash_equal(const uint8_t *a, const uint8_t *b)
 	EMSHA_CHECK(b != NULL, false);
 
 	for (uint32_t i = 0; i < SHA256_HASH_SIZE; i++) {
-		res = a[i] ^ b[i];
+		res += a[i] ^ b[i];
 	}
 
 	return res == 0;

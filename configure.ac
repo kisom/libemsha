@@ -2,7 +2,7 @@
 # versions that can be used with Travis right now.
 AC_PREREQ([2.68])
 AC_INIT([libemsha],
-	[1.0.0],
+	[1.0.1],
 	[coder@kyleisom.net],
 	[libemsha],
 	[https://kyleisom.net/projects/libemsha/])

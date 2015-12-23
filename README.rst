@@ -24,7 +24,7 @@ The source code is available via `Github
     git clone https://github.com/kisom/libemsha
     git clone git@github.com:kisom/libemsha
 
-The current release is `1.0.0 <https://github.com/kisom/libemsha/archive/1.0.0.zip>`_.
+The current release is `1.0.1 <https://github.com/kisom/libemsha/releases/tag/v1.0.1>`_.
 
 The project is built using Autotools and ``make``.
 

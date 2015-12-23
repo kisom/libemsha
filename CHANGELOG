@@ -1,5 +1,11 @@
 LIBEMSHA CHANGELOG
 ==================
 
+1.0.1 (2015-12-22):
+
+Fixed:
+	+ hash_equal was improperly performing its comparison.
+
+------------------
 1.0.0 (2015-12-18):
 Initial release.
