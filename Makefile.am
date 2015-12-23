@@ -3,9 +3,7 @@ SUBDIRS =		src
 
 TESTS = src/emsha_core_test		\
 	src/emsha_sha256_test		\
-	src/emsha_hmac_test		\
-	src/emsha_mem_test		\
-	src/emsha_static_mem_test
+	src/emsha_hmac_test
 
 dist_data_DATA =   LICENSE		\
 		   README.rst		\
