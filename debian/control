@@ -1,0 +1,28 @@
+Source: libemsha
+Priority: optional
+Maintainer: Kyle Isom <kyle@imap.cc>
+Build-Depends: debhelper (>= 9), autotools-dev
+Standards-Version: 3.9.5
+Section: libs
+Homepage: https://git.kyleisom.net/lib/libemsha
+Vcs-Git: https://git.kyleisom.net/lib/libemsha
+Vcs-Browser: https://git.kyleisom.net/lib/libemsha
+
+Package: libemsha-dev
+Section: libdevel
+Architecture: any
+Depends: libemsha-1 (= ${binary:Version}), ${misc:Depends}
+Description: HMAC-SHA-256 C++11 library - development files
+ An MIT-licensed HMAC-SHA-256 C++11 library designed for embedded
+ systems. It is built following the JPL Power of Ten rules. It was written
+ in response to a need for a standalone HMAC-SHA-256 package that could
+ run on several platforms.
+
+Package: libemsha-1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: HMAC-SHA-256 C++11 library
+ An MIT-licensed HMAC-SHA-256 C++11 library designed for embedded
+ systems. It is built following the JPL Power of Ten rules. It was written
+ in response to a need for a standalone HMAC-SHA-256 package that could
+ run on several platforms.
