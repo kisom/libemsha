@@ -1,3 +1,15 @@
+libemsha (1.0.2-2) stable; urgency=medium
+
+  * Package bump to fix dependency issues.
+
+ -- Kyle Isom <kyle@imap.cc>  Thu, 28 Jan 2016 00:49:45 -0800
+
+libemsha (1.0.2-1) stable; urgency=medium
+
+  * Add pkg-config to build.
+
+ -- Kyle Isom <kyle@imap.cc>  Thu, 28 Jan 2016 00:27:31 -0800
+
 libemsha (1.0.1-1) unstable; urgency=low
 
   * Initial release for packaging.

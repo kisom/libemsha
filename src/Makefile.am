@@ -7,6 +7,8 @@ CLOC_PSOURCES =	emsha.cc sha256.cc hmac.cc internal.hh			\
 		emsha/emsha.hh emsha/hmac.hh emsha/sha256.hh
 CLOC_TSOURCES =	 test_emsha.cc test_hmac.cc test_mem.cc test_sha256.cc	\
 		 test_utils.cc test_utils.hh
+pkgconfigdir =	$(libdir)/pkgconfig
+pkgconfig_DATA = libemsha-1.pc
 
 lib_LTLIBRARIES =		libemsha.la
 nobase_include_HEADERS =	emsha/sha256.hh emsha/hmac.hh emsha/emsha.hh

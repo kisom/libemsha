@@ -2,17 +2,18 @@
 # versions that can be used with Travis right now.
 AC_PREREQ([2.68])
 AC_INIT([libemsha],
-	[1.0.1],
+	[1.0.2],
 	[coder@kyleisom.net],
 	[libemsha],
 	[https://kyleisom.net/projects/libemsha/])
 AM_INIT_AUTOMAKE([1.11 foreign])
 
 AC_CONFIG_SRCDIR([src/emsha/sha256.hh])
-AC_CONFIG_FILES([Makefile src/Makefile doc/source/conf.py doc/source/header.rst])
+AC_CONFIG_FILES([Makefile src/Makefile doc/source/conf.py doc/source/header.rst src/libemsha-1.pc])
 AC_CONFIG_FILES([do-release], [chmod +x do-release])
 AC_CONFIG_MACRO_DIR([m4])
 
+PKG_PROG_PKG_CONFIG
 AC_CHECK_HEADERS
 
 LT_INIT

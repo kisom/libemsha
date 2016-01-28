@@ -1,11 +1,12 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libemsha
-Source: <url://example.com>
+Source: https://git.kyleisom.net/lib/libemsha
 
 Files: *
 Copyright: <years> <put author's name and email here>
            <years> <likewise for another author>
-License: 2015 K. Isom <coder@kyleisom.net>
+License: MIT
+ 2015 K. Isom <coder@kyleisom.net>
  Permission is hereby granted, free of charge, to any person obtaining a
  copy of this software and associated documentation files (the "Software"),
  to deal in the Software without restriction, including without limitation

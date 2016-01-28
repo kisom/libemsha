@@ -1,6 +1,13 @@
 LIBEMSHA CHANGELOG
 ==================
 
+1.0.2 (2015-01-28):
+
+Added:
+	+ Build now includes pkg-config.
+	+ Debian packaging source files added.
+
+------------------
 1.0.1 (2015-12-22):
 
 Fixed:
