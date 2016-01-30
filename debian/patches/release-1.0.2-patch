@@ -1,0 +1,66 @@
+Description: This adds the release files to the source tarball.
+ The release files from the tagged release weren't added into
+ the previous source file.
+ .
+ libemsha (1.0.2-3) main; urgency=medium
+ .
+   * Clean up debian packaging files.
+Author: Kyle Isom <kyle@imap.cc>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+--- libemsha-1.0.2.orig/CHANGELOG
++++ libemsha-1.0.2/CHANGELOG
+@@ -1,7 +1,7 @@
+ LIBEMSHA CHANGELOG
+ ==================
+ 
+-1.0.2 (2015-01-26):
++1.0.2 (2015-01-28):
+ 
+ Added:
+ 	+ Build now includes pkg-config.
+--- libemsha-1.0.2.orig/doc/libemsha.rst
++++ libemsha-1.0.2/doc/libemsha.rst
+@@ -2,9 +2,9 @@
+ libemsha
+ ========
+ 
+-Version: 1.0.1
++Version: 1.0.2
+ 
+-Date:    2015-12-22
++Date:    2016-01-28
+ 
+ 
+ -----------------
+--- /dev/null
++++ libemsha-1.0.2/doc/source/header.dated.rst
+@@ -0,0 +1,24 @@
++========
++libemsha
++========
++
++Version: 1.0.2
++
++Date:    2016-01-28
++
++
++-----------------
++Table of Contents
++-----------------
++
+++ Introduction
+++ Getting and Building the Source
+++ Library Overview
+++ The Hash interface
+++ The SHA256 class
+++ The HMAC class
+++ Miscellaneous functions
+++ Test Programs
+++ References
++
++

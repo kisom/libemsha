@@ -1,3 +1,15 @@
+libemsha (1.0.2-4) stable; urgency=medium
+
+  * More Debian packaging cleanups.
+
+ -- Kyle Isom <kyle@imap.cc>  Fri, 29 Jan 2016 16:29:33 -0800
+
+libemsha (1.0.2-3) main; urgency=medium
+
+  * Clean up debian packaging files.
+
+ -- Kyle Isom <kyle@imap.cc>  Fri, 29 Jan 2016 00:56:54 -0800
+
 libemsha (1.0.2-2) stable; urgency=medium
 
   * Package bump to fix dependency issues.
