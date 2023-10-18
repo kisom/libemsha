@@ -9,14 +9,14 @@ jobs:
     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#executor-job
     docker:
-      - image: kisom/sc-dev:latest
+      - image: kisom/sc-dev:1.0.0
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
       - run:
-          name: "Setup cmake build"
-          command: "./scripts/setup-cmake.sh"
+          name: Setup cmake build
+          command: ./scripts/setup-cmake.sh
       -
 
 # Orchestrate jobs using workflows

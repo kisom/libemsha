@@ -55,8 +55,10 @@ install_macos () {
 
 
 install_linux () {
+  DISTRIB_ID="${DISTRIB_ID:-}"
 	echo "[+] host system is Linux"
 	[[ -f "/etc/lsb-release" ]] && source /etc/lsb-release
+	[[ -f "/etc/rpi-issue" ]] && DISTRIB_ID=apt-based
 	if [ -z "${DISTRIB_ID}" ]
 	then
 		if [ -d /etc/apt ]
