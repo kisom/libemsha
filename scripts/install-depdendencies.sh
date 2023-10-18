@@ -33,7 +33,7 @@ install_debianesque () {
   fi
 
 	echo "[+] installing tools"
-	sudo $SUDO apt-get $APTARGS install git clang scdoc python3-pip
+	sudo $SUDO apt-get $APTARGS install git clang scdoc python3-pip doxygen graphviz
 }
 
 install_unsupported () {
