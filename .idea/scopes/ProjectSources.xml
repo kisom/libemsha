@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="ProjectSources" pattern="file[emsha]:emsha/*||file:hmac.cc||file:emsha.cc||file:sha256.cc" />
+</component>

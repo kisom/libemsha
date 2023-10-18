@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: @PROJECT_NAME@
+Description: C++11 HMAC-SHA256 library
+URL: https://git.wntrmute.dev/kyle/emsha
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lemsha
