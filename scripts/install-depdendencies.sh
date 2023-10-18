@@ -14,6 +14,11 @@ AUTOMATED_MODE=${AUTOMATED_MODE:-}
 
 install_debianesque () {
 	APTARGS=""
+	SUDO="sudo"
+	if [ "$(whoami)" == "root" ]
+	then
+	  SUDO=
+  fi
 
 	if [ ! -z "${AUTOMATED_MODE}" ]
 	then
@@ -25,11 +30,10 @@ install_debianesque () {
 	if [ -z "$(command -v cmake)" ]
 	then
 		./scripts/install-cmake-debian.sh
+  fi
 
 	echo "[+] installing tools"
-	sudo apt-get $APTARGS install git cmake clang scdoc python3-pip
-
-	( cd docs/ && python3 -m pip install -r requirements.txt )
+	sudo $SUDO apt-get $APTARGS install git clang scdoc python3-pip
 }
 
 install_unsupported () {

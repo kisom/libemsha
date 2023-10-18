@@ -1,5 +1,6 @@
 build
 cmake-build-*
+compile_commands.json
 
 TAGS
 tags
