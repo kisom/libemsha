@@ -41,7 +41,7 @@
 
 
 // Number of test iterations.
-static constexpr std::uint32_t ITERS = 8192;
+static constexpr std::uint32_t ITERS = 32768;
 
 // The key used for HMAC.
 static constexpr std::uint8_t  k[] = {
@@ -111,13 +111,13 @@ static void
 iterateSHA()
 {
 	emsha::SHA256       ctx;
-	int                 cmp = 0;
-	emsha::EMSHA_RESULT res;
+	int                cmp = 0;
+	emsha::EMSHAResult res;
 
 	res = ctx.Update(m, sizeof(m));
-	assert(emsha::EMSHA_ROK == res);
+	assert(emsha::EMSHAResult::OK == res);
 	res = ctx.Result(dig);
-	assert(emsha::EMSHA_ROK == res);
+	assert(emsha::EMSHAResult::OK == res);
 
 	cmp = std::memcmp(dig, d, emsha::SHA256_HASH_SIZE);
 	assert(0 == cmp);
@@ -128,13 +128,13 @@ static void
 iterateHMAC()
 {
 	emsha::HMAC         ctx(k, kl);
-	int                 cmp = 0;
-	emsha::EMSHA_RESULT res;
+	int                cmp = 0;
+	emsha::EMSHAResult res;
 
 	res = ctx.Update(m, sizeof(m));
-	assert(emsha::EMSHA_ROK == res);
+	assert(emsha::EMSHAResult::OK == res);
 	res = ctx.Result(dig);
-	assert(emsha::EMSHA_ROK == res);
+	assert(emsha::EMSHAResult::OK == res);
 
 	cmp = std::memcmp(dig, t, emsha::SHA256_HASH_SIZE);
 	assert(0 == cmp);
@@ -146,7 +146,7 @@ iterateSHASP()
 {
 	int cmp = 0;
 
-	assert(emsha::EMSHA_ROK == emsha::sha256Digest(m, sizeof(m), dig));
+	assert(emsha::EMSHAResult::OK == emsha::SHA256Digest(m, sizeof(m), dig));
 	cmp = std::memcmp(dig, d, emsha::SHA256_HASH_SIZE);
 	assert(0 == cmp);
 }
@@ -155,11 +155,11 @@ iterateSHASP()
 static void
 iterateHMACSP()
 {
-	int                 cmp = 0;
-	emsha::EMSHA_RESULT res;
+	int                cmp = 0;
+	emsha::EMSHAResult res;
 
 	res = emsha::ComputeHMAC(k, kl, m, sizeof(m), dig);
-	assert(emsha::EMSHA_ROK == res);
+	assert(emsha::EMSHAResult::OK == res);
 
 	cmp = std::memcmp(dig, t, emsha::SHA256_HASH_SIZE);
 	assert(0 == cmp);

@@ -77,50 +77,50 @@ satisfy a common interface :cpp`Hash`{.interpreted-text role="class"}.
 All functionality provided by this library is found under the `emsha`
 namespace.
 
-### `EMSHA_RESULT`
+### `EMSHAResult`
 
-The `EMSHA_RESULT` enum is used to convey the result of an operation.
+The `EMSHAResult` enum is used to convey the result of an operation.
 The possible values are:
 
     // All operations have completed successfully so far.
-    EMSHA_ROK = 0,
+    EMSHAResult::OK = 0,
 
     // A self test or unit test failed.
-    EMSHA_TEST_FAILURE = 1,
+    EMSHAResult::TestFailure = 1,
 
     // A null pointer was passed in as a buffer where it
     // shouldn't have been.
-    EMSHA_NULLPTR = 2,
+    EMSHAResult::NullPointer = 2,
 
     // The Hash is in an invalid state.
-    EMSHA_INVALID_STATE = 3,
+    EMSHAResult::InvalidState = 3,
 
     // The input to SHA256::update is too large.
-    SHA256_INPUT_TOO_LONG = 4,
+    EMSHAResult::InputTooLong = 4,
 
     // The self tests have been disabled, but a self test
     // function was called.
-    EMSHA_SELFTEST_DISABLED = 5
+    EMSHAResult::SelfTestDisabled = 5
 
 As a convenience, the following `typedef` is also provided.
 
-> `typedef enum _EMSHA_RESULT_` :cpp`EMSHA_RESULT`{.interpreted-text
+> `typedef enum _EMSHA_RESULT_` :cpp`EMSHAResult`{.interpreted-text
 > role="type"}
 
 ## The Hash interface
 
 In general, a [Hash]{.title-ref} is used along the lines of: :
 
-    emsha::EMSHA_RESULT
+    emsha::EMSHAResult
     hash_single_pass(uint8_t *m, uint32_t ml, uint8_t *digest)
     {
             // Depending on the implementation, the constructor may need
             // arguments.
             emsha::Hash         h;
-            emsha::EMSHA_RESULT res;
+            emsha::EMSHAResult res;
 
             res = h.write(m, ml);
-            if (emsha::EMSHA_ROK != res) {
+            if (emsha::EMSHAResult::OK != res) {
                     return res;
             }
 

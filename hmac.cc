@@ -63,11 +63,12 @@ static constexpr uint8_t opad = 0x5c;
 HMAC::HMAC(const uint8_t *ik, uint32_t ikl)
     : hstate(HMAC_INIT), k{0}, buf{0}
 {
-	
-	std::fill(this->k, this->k + emsha::HMAC_KEY_LENGTH, 0);
+	std::fill(this->k, this->k+HMAC_KEY_LENGTH, 0);
 
 	if (ikl < HMAC_KEY_LENGTH) {
-		std::copy(ik, ik + ikl, this->k);
+		for (uint32_t i = 0; i < ikl; i++) {
+			this->k[i] = ik[i];
+		}
 		while (ikl < HMAC_KEY_LENGTH) {
 			this->k[ikl++] = 0;
 		}
@@ -76,7 +77,9 @@ HMAC::HMAC(const uint8_t *ik, uint32_t ikl)
 		this->ctx.Result(this->k);
 		this->ctx.Reset();
 	} else {
-		std::copy(ik, ik + ikl, this->k);
+		for (uint32_t i = 0; i < ikl; i++) {
+			this->k[i] = ik[i];
+		}
 	}
 
 	this->reset();
@@ -93,17 +96,17 @@ HMAC::~HMAC()
 }
 
 
-EMSHA_RESULT
+EMSHAResult
 HMAC::Reset()
 {
 	return this->reset();
 }
 
 
-EMSHA_RESULT
+EMSHAResult
 HMAC::reset()
 {
-	EMSHA_RESULT res;
+	EMSHAResult res;
 
 	// Following a reset, both SHA-256 contexts and result buffer should be
 	// zero'd out for a clean slate. The HMAC state should be reset
@@ -119,7 +122,7 @@ HMAC::reset()
 	}
 
 	res = this->ctx.Update(key, HMAC_KEY_LENGTH);
-	if (EMSHA_ROK != res) {
+	if (EMSHAResult::OK != res) {
 		this->hstate = HMAC_INVALID;
 		return res;
 	}
@@ -128,55 +131,56 @@ HMAC::reset()
 	std::fill(key, key + HMAC_KEY_LENGTH, 0);
 
 	this->hstate = HMAC_IPAD;
-	return EMSHA_ROK;
+	return EMSHAResult::OK;
 }
 
 
-EMSHA_RESULT
-HMAC::Update(const uint8_t *m, uint32_t ml)
+EMSHAResult
+HMAC::Update(const std::uint8_t *message, std::uint32_t messageLength)
 {
-	EMSHA_RESULT res;
-	SHA256 &hctx = this->ctx;
+	EMSHAResult res;
+	SHA256      &hctx = this->ctx;
 
-	EMSHA_CHECK(m != nullptr, EMSHA_NULLPTR);
-	EMSHA_CHECK(HMAC_IPAD == this->hstate, EMSHA_INVALID_STATE);
+	EMSHA_CHECK(message != nullptr, EMSHAResult::NullPointer);
+	EMSHA_CHECK(HMAC_IPAD == this->hstate, EMSHAResult::InvalidState);
 
 	// Write the message to the SHA-256 context.
-	res = hctx.Update(m, ml);
-	if (EMSHA_ROK != res) {
+	res = hctx.Update(message, messageLength);
+	if (EMSHAResult::OK != res) {
 		this->hstate = HMAC_INVALID;
 		return res;
 	}
 	assert(HMAC_IPAD == this->hstate);
 
-	return EMSHA_ROK;
+	return EMSHAResult::OK;
 }
 
 
-inline EMSHA_RESULT
+inline EMSHAResult
 HMAC::finalResult(uint8_t *d)
 {
 	if (nullptr == d) {
-		return EMSHA_NULLPTR;
+		return EMSHAResult::NullPointer;
 	}
 
 	// If the HMAC has already been finalised, skip straight to
 	// copying the result.
-	if (HMAC_FIN == this->hstate) {
-		std::copy(this->buf, this->buf + SHA256_HASH_SIZE, d);
-		return EMSHA_ROK;
+	if (this->hstate == HMAC_FIN) {
+		std::copy(this->buf, this->buf+SHA256_HASH_SIZE, d);
+
+		return EMSHAResult::OK;
 	}
 
-	EMSHA_CHECK(HMAC_IPAD == this->hstate, EMSHA_INVALID_STATE);
+	EMSHA_CHECK(HMAC_IPAD == this->hstate, EMSHAResult::InvalidState);
 
-	EMSHA_RESULT res;
+	EMSHAResult res;
 
 	// Use the result buffer as an intermediate buffer to store the result
 	// of the inner hash.
 	res = this->ctx.Result(this->buf);
-	if (EMSHA_ROK != res) {
+	if (EMSHAResult::OK != res) {
 		this->hstate = HMAC_INVALID;
-		return EMSHA_INVALID_STATE;
+		return EMSHAResult::InvalidState;
 	}
 	assert(HMAC_IPAD == this->hstate);
 
@@ -192,7 +196,7 @@ HMAC::finalResult(uint8_t *d)
 	}
 
 	res          = this->ctx.Update(key, HMAC_KEY_LENGTH);
-	if (EMSHA_ROK != res) {
+	if (EMSHAResult::OK != res) {
 		this->hstate = HMAC_INVALID;
 		return res;
 	}
@@ -203,14 +207,14 @@ HMAC::finalResult(uint8_t *d)
 
 	// Write the inner hash result into the outer hash.
 	res = this->ctx.Update(this->buf, SHA256_HASH_SIZE);
-	if (EMSHA_ROK != res) {
+	if (EMSHAResult::OK != res) {
 		this->hstate = HMAC_INVALID;
 		return res;
 	}
 
 	// Write the outer hash result into the working buffer.
 	res = this->ctx.Finalise(this->buf);
-	if (EMSHA_ROK != res) {
+	if (EMSHAResult::OK != res) {
 		this->hstate = HMAC_INVALID;
 		return res;
 	}
@@ -218,21 +222,21 @@ HMAC::finalResult(uint8_t *d)
 
 	std::copy(this->buf, this->buf + SHA256_HASH_SIZE, d);
 	this->hstate = HMAC_FIN;
-	return EMSHA_ROK;
+	return EMSHAResult::OK;
 }
 
 
-EMSHA_RESULT
-HMAC::Finalise(uint8_t *d)
+EMSHAResult
+HMAC::Finalise(std::uint8_t *digest)
 {
-	return this->finalResult(d);
+	return this->finalResult(digest);
 }
 
 
-EMSHA_RESULT
-HMAC::Result(uint8_t *d)
+EMSHAResult
+HMAC::Result(std::uint8_t *digest)
 {
-	return this->finalResult(d);
+	return this->finalResult(digest);
 }
 
 
@@ -243,21 +247,17 @@ HMAC::Size()
 }
 
 
-EMSHA_RESULT
-ComputeHMAC(const uint8_t *k, uint32_t kl, const uint8_t *m, uint32_t ml,
+EMSHAResult
+ComputeHMAC(const uint8_t *k, const uint32_t kl,
+	    const uint8_t *m, const uint32_t ml,
 	    uint8_t *d)
 {
-	EMSHA_RESULT res;
-	HMAC         h(k, kl);
+	EMSHAResult res;
+	HMAC        h(k, kl);
 
 	res = h.Update(m, ml);
-	if (EMSHA_ROK != res) {
-		return res;
-	}
-
-	res = h.Result(d);
-	if (EMSHA_ROK != res) {
-		return res;
+	if (res == EMSHAResult::OK) {
+		res = h.Result(d);
 	}
 
 	return res;

@@ -64,13 +64,13 @@ void	dump_pair(std::uint8_t *, std::uint8_t *);
 
 
 // SHA-256 testing functions.
-emsha::EMSHA_RESULT	runHashTest(const struct hashTest& test, const std::string& label);
+emsha::EMSHAResult	runHashTest(const struct hashTest& test, const std::string& label);
 int			runHashTests(const struct hashTest *tests, const std::size_t nTests,
     				     const std::string& label);
 
 
 // HMAC-SHA-256 testery.
-emsha::EMSHA_RESULT	runHMACTest(struct hmacTest test, const std::string& label);
+emsha::EMSHAResult	runHMACTest(struct hmacTest& test, const std::string& label);
 int			runHMACTests(const struct hmacTest *tests, std::size_t nTests,
     				     const std::string& label);
 

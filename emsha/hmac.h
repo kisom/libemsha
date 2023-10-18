@@ -43,151 +43,137 @@ const uint32_t HMAC_KEY_LENGTH = SHA256_MB_SIZE;
 
 /// HMAC is a keyed hash that can be used to produce an
 /// authenticated hash of some data. The HMAC is built on
-/// (and uses internally) the SHA-256 class; it's helpful to
+/// (and uses internally) the SHA256 class; it's helpful to
 /// note that faults that occur in the SHA-256 code will be
 /// propagated up as the return value from many of the HMAC
 /// functions.
 class HMAC : Hash {
 public:
-	/// An HMAC is constructed with a key and the
-	/// length of the key. This key is stored in
-	/// the HMAC context, and is wiped by the HMAC
-	/// destructor.
+	/// \brief Construct an HMAC with its initial key.
+	///
+	/// An HMAC is constructed with a key and the length of the
+	/// key. This key is stored in the HMAC context, and is wiped
+	/// by the HMAC destructor.
 	///
 	/// \param k The HMAC key.
 	/// \param kl THe length of the HMAC key.
 	HMAC(const uint8_t *k, uint32_t kl);
 
-	/// Reset clears any data written to the HMAC;
-	/// this is equivalent to constructing a new HMAC,
-	/// but it preserves the keys.
+	/// \brief Clear any data written to the HMAC.
 	///
-	/// \return EMSHA_ROK is returned if the reset
-	/// 	    occurred without (detected) fault.
-	///	    If a fault occurs with the under-
-	///	    lying SHA-256 context, the error
-	///	    code is returned.
-	EMSHA_RESULT Reset() override;
+	/// This is equivalent to constructing a new HMAC, but it
+	/// preserves the keys.
+	///
+	/// \return EMSHAResult::OK is returned if the reset occurred
+	/// 	    without (detected) fault. If a fault occurs with
+	///	    the underlying SHA256 context, the error code is
+	///	    returned.
+	EMSHAResult Reset() override;
 
-	/// Update writes data into the context. While
-	/// there is an upper limit on the size of data
-	/// that the underlying hash can operate on,
-	/// this package is designed for small systems
-	/// that will not approach that level of data
-	/// (which is on the order of 2 exabytes), so it
-	/// is not thought to be a concern.
+	/// \brief Write data into the context.
 	///
-	/// \param m A byte array containing the message
+	/// While there is an upper limit on the size of data that the
+	/// underlying hash can operate on, this package is designed
+	/// for small systems that will not approach that level of data
+	/// (which is on the order of 2 exabytes), so it is not a
+	/// concern for this library.
+	///
+	/// \param message A byte array containing the message
 	///	     to be written.
-	/// \param ml The message length, in bytes.
-	/// \return
-	///     - EMSHA_NULLPTR is returned if m is NULL and ml is
-	///       nonzero.
-	///     - EMSHA_INVALID_STATE is returned if the update
-	///       is called after a call to finalize.
-	///     - SHA256_INPUT_TOO_LONG is returned if too much
-	///       data has been written to the context.
-	///     - EMSHA_ROK is returned if the data was
-	///       successfully written into the HMAC context.
+	/// \param messageLength The message length, in bytes.
+	/// \return An ::EMSHAResult describing the result of the
+	///         operation.
 	///
-	EMSHA_RESULT Update(const uint8_t *, uint32_t) override;
+	///        - EMSHAResult::NullPointer is returned if m is NULL
+	///          and ml is nonzero.
+	///        - EMSHAResult::InvalidState is returned if the
+	///          update is called after a call to finalize.
+	///        - EMSHAResult::InputTooLong is returned if too much
+	///          data has been written to the context.
+	///        - EMSHAResult::OK is returned if the data was
+	///          successfully written into the HMAC context.
+	EMSHAResult Update(const std::uint8_t *message, std::uint32_t messageLength) override;
 
-	// Finalise completes the HMAC computation. Once this
-	// method is called, the context cannot be updated
-	// unless the context is reset.
-	//
-	// Inputs:
-	//     d: a byte buffer that must be at least
-	//     HMAC.size() in length.
-	//
-	// Outputs:
-	//     EMSHA_NULLPTR is returned if d is the null
-	//     pointer.
-	//
-	//     EMSHA_INVALID_STATE is returned if the HMAC
-	//     context is in an invalid state, such as if there
-	//     were errors in previous updates.
-	//
-	//     EMSHA_ROK is returned if the context was
-	//     successfully finalised and the digest copied to
-	//     d.
-	//
-	EMSHA_RESULT Finalise(uint8_t *) override;
+	/// \brief Complete the HMAC computation.
+	///
+	/// \note Once #Finalise is called, the context cannot be
+	///       updated unless the context is reset.
+	///
+	/// \param digest A byte buffer that must be at least #HMAC.Size()
+	///          in length.
+	/// \return An EMSHAResult describing the result of this
+	///         method:
+	///
+	///         - EMSHAResult::NullPointer is returned if d is a
+	///           null pointer.
+	///         - EMSHAResult::InvalidState is returned if the HMAC
+	///           context is in an invalid state, such as if there
+	///           were errors in previous updates.
+	///         - EMSHAResult::OK is returned if the context was
+	///           successfully finalised and the digest copied to d.
+	///
+	EMSHAResult Finalise(std::uint8_t *digest) override;
 
-	// Result copies the result from the HMAC context into
-	// the buffer pointed to by d, running finalize if
-	// needed. Once called, the context cannot be updated
-	// until the context is reset.
-	//
-	// Inputs:
-	//     d: a byte buffer that must be at least
-	//     HMAC.size() in length.
-	//
-	// Outputs:
-	//     EMSHA_NULLPTR is returned if d is the null
-	//     pointer.
-	//
-	//     EMSHA_INVALID_STATE is returned if the HMAC
-	//     context is in an invalid state, such as if there
-	//     were errors in previous updates.
-	//
-	//     EMSHA_ROK is returned if the context was
-	//     successfully finalised and the digest copied to
-	//     d.
-	//
-	EMSHA_RESULT Result(uint8_t *) override;
+	/// \brief Copy the current digest into a destination buffer.
+	///
+	/// Copy the current digest from the HMAC context into
+	/// `digest`, running #Finalise if needed. Once called, the
+	/// context cannot be updated until the context is reset.
+	///
+	/// \param digest A byte buffer that must be at least #HMAC.size()
+	///               in length.
+	/// \return An ::EMSHAResult describing the result of this
+	///         method:
+	///
+	///         - EMSHAResult::NullPointer is returned if d is a
+	///           null pointer.
+	///         - EMSHAResult::InvalidState is returned if the HMAC
+	///           context is in an invalid state, such as if there
+	///           were errors in previous updates.
+	///         - EMSHAResult::OK is returned if the context was
+	///           successfully finalised and the digest copied to d.
+	EMSHAResult Result(std::uint8_t *digest) override;
 
 
-	// size returns the output size of HMAC-SHA-256, e.g.
-	// the size that the buffers passed to finalize and
-	// result should be.
-	//
-	// Outputs:
-	//     A uint32_t representing the expected size
-	//     of buffers passed to result and finalize.
+	/// \brief Returns the output size of HMAC-SHA-256.
+	///
+	/// The buffers passed to #Update and #Finalise should be at
+	/// least this size.
+	///
+	/// \return The expected size of buffers passed to result and
+	///         finalize.
 	std::uint32_t Size() override;
 
-	// When an HMAC context is destroyed, it is reset and
-	// the key material is zeroised using the STL fill
-	// function.
-	~HMAC(void);
+	/// When an HMAC context is destroyed, it is reset and
+	/// the key material is zeroised using the STL `fill`
+	/// function.
+	~HMAC();
 private:
 	uint8_t hstate;
 	SHA256  ctx;
 	uint8_t k[HMAC_KEY_LENGTH];
-	uint8_t buf[SHA256_HASH_SIZE];
+	uint8_t	buf[SHA256_HASH_SIZE];
 
-	EMSHA_RESULT reset();
-	inline EMSHA_RESULT
-	finalResult(uint8_t *d);
+	EMSHAResult reset();
+	inline EMSHAResult	finalResult(uint8_t *d);
 };
 
-// compute_hmac performs a single-pass HMAC computation over
-// a message.
-//
-// Inputs:
-//     k: a byte buffer containing the HMAC key.
-//
-//     kl: the length of the HMAC key.
-//
-//     m: the message data over which the HMAC is to be computed.
-//
-//     ml: the length of the message.
-//
-//     d: a byte buffer that will be used to store the resulting
-//     HMAC. It should be SHA256_HASH_SIZE bytes in size.
-//
-// Outputs:
-//     This function handles setting up the HMAC context with
-//     the given key, calling update with the message data, and
-//     then calling finalize to place the result in the output
-//     buffer. Any of the faults that can occur in these functions
-//     can be returned here, or EMSHA_ROK if the HMAC was
-//     successfully computed.
-EMSHA_RESULT
-ComputeHMAC(const uint8_t *k, uint32_t kl,
-	    const uint8_t *m, uint32_t ml,
+
+/// \brief Perform a single-pass HMAC computation over a message.
+///
+/// \param k A byte buffer containing the HMAC key.
+/// \param kl The length of the HMAC key.
+/// \param m The message data over which the HMAC is to be computed.
+/// \param ml The length of the message.
+/// \param d Byte buffer that will be used to store the resulting
+///          HMAC. It should be emsha::SHA256_HASH_SIZE bytes in size.
+/// \return An ::EMSHAResult describing the result of the HMAC operation.
+EMSHAResult
+ComputeHMAC(const uint8_t *k, const uint32_t kl,
+	    const uint8_t *m, const uint32_t ml,
 	    uint8_t *d);
+
+
 } // end of namespace emsha
 
 

@@ -76,18 +76,34 @@ main()
 #ifdef EMSHA_NO_SELFTEST
 	cout << "[NOTICE] internal self-tests have been disabled.\n";
 #else
-	auto selfTestStatus = emsha::sha256SelfTest();
+	auto selfTestStatus = emsha::SHA256SelfTest();
 	switch (selfTestStatus) {
-	case emsha::EMSHA_ROK:
+	case emsha::EMSHAResult::OK:
 		cout << "PASSED: SHA-256 self test\n";
 		break;
-	case emsha::EMSHA_TEST_FAILURE:
-		cout << "FAILED: SHA-256 self test (test failure)\n";
+	case emsha::EMSHAResult::TestFailure:
+		cout << "FAILED: SHA-256 self-test\n";
+		break;
+	case emsha::EMSHAResult::Unknown:
+		cout << "FAILED: SHA-256 self test (fault: Unknown)\n";
+		break;
+	case emsha::EMSHAResult::NullPointer:
+		cout << "FAILED: SHA-256 self test (fault: NullPointer)\n";
+		break;
+	case emsha::EMSHAResult::InvalidState:
+		cout << "FAILED: SHA-256 self test (fault: InvalidState)\n";
+		break;
+	case emsha::EMSHAResult::InputTooLong:
+		cout << "FAILED: SHA-256 self test (fault: InputTooLong)\n";
+		break;
+	case emsha::EMSHAResult::SelfTestDisabled:
+		cout << "FAILED: SHA-256 self test (fault: SelfTestDisabled)\n";
 		break;
 	default:
-		cout << "FAILED: SHA-256 self test (fault " << selfTestStatus << ")\n";
+		cout << "FAILED: SHA-256 self test (fault: internal system failure)\n";
+		abort();
 	}
-	assert(selfTestStatus == emsha::EMSHA_ROK);
+	assert(selfTestStatus == emsha::EMSHAResult::OK);
 #endif
 
 

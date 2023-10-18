@@ -24,13 +24,13 @@ if (${DOXYGEN_FOUND})
 	set(DOXYGEN_GENERATE_LATEX YES)
 	set(DOXYGEN_EXTRACT_ALL YES)
 	set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${CMAKE_CURRENT_SOURCE_DIR}/docs/mainpage.md")
+	set(DOXYGEN_EXCLUDE_PATTERNS "test_*" "*.cc" )
 	message(STATUS "Doxygen found, building docs.")
 
 	doxygen_add_docs(${PROJECT_NAME}_docs
 		${HEADER_FILES}
-		${SOURCE_FILES}
+		ALL
 		USE_STAMP_FILE)
-	add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_docs)
 	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
 		${CMAKE_CURRENT_BINARY_DIR}/latex
 		DESTINATION share/doc/${PROJECT_NAME}/doxygen)

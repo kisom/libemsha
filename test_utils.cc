@@ -53,28 +53,28 @@ DumpHexString(std::string& hs, uint8_t *s, uint32_t sl)
 }
 
 
-emsha::EMSHA_RESULT
-runHMACTest(const struct hmacTest test, const string& label)
+emsha::EMSHAResult
+runHMACTest(const struct hmacTest& test, const string& label)
 {
-	emsha::HMAC		h(test.key, test.keylen);
-	emsha::EMSHA_RESULT	res;
-	uint8_t			dig[emsha::SHA256_HASH_SIZE];
+	emsha::HMAC        h(test.key, test.keylen);
+	emsha::EMSHAResult res;
+	uint8_t            dig[emsha::SHA256_HASH_SIZE];
 	string			hs;
 
 	res = h.Update((uint8_t *)test.input.c_str(), test.input.size());
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		goto exit;
 	}
 
 	for (uint32_t n = 0; n < RESULT_ITERATIONS; n++) {
 		res = h.Result(dig);
-		if (emsha::EMSHA_ROK != res) {
+		if (emsha::EMSHAResult::OK != res) {
 			goto exit;
 		}
 
 		DumpHexString(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
-			res = emsha::EMSHA_TEST_FAILURE;
+			res = emsha::EMSHAResult::TestFailure;
 			goto exit;
 		}
 		memset(dig, 0, emsha::SHA256_HASH_SIZE);
@@ -84,19 +84,19 @@ runHMACTest(const struct hmacTest test, const string& label)
 	h.Reset();
 
 	res = h.Update((uint8_t *)test.input.c_str(), test.input.size());
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		goto exit;
 	}
 
 	for (uint32_t n = 0; n < RESULT_ITERATIONS; n++) {
 		res = h.Result(dig);
-		if (emsha::EMSHA_ROK != res) {
+		if (emsha::EMSHAResult::OK != res) {
 			goto exit;
 		}
 
 		DumpHexString(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
-			res = emsha::EMSHA_TEST_FAILURE;
+			res = emsha::EMSHAResult::TestFailure;
 			goto exit;
 		}
 		memset(dig, 0, emsha::SHA256_HASH_SIZE);
@@ -106,7 +106,7 @@ runHMACTest(const struct hmacTest test, const string& label)
 	res = emsha::ComputeHMAC(test.key, test.keylen,
 	    (uint8_t *)test.input.c_str(), test.input.size(),
 	    dig);
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		cerr << "(running single pass function test)\n";
 		goto exit;
 	}
@@ -114,15 +114,15 @@ runHMACTest(const struct hmacTest test, const string& label)
 	DumpHexString(hs, dig, emsha::SHA256_HASH_SIZE);
 	if (hs != test.output) {
 		cerr << "(comparing single pass function output)\n";
-		res = emsha::EMSHA_TEST_FAILURE;
+		res = emsha::EMSHAResult::TestFailure;
 		goto exit;
 	}
 	memset(dig, 0, emsha::SHA256_HASH_SIZE);
 
-	res = emsha::EMSHA_ROK;
+	res = emsha::EMSHAResult::OK;
 
 exit:
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		cerr << "FAILED: " << label << endl;
 		cerr << "\tinput: " << test.input << endl;
 		cerr << "\twanted: " << test.output << endl;
@@ -137,7 +137,7 @@ int
 runHMACTests(const struct hmacTest *tests, size_t nTests, const string& label)
 {
 	for (uint32_t i = 0; i < nTests; i++) {
-		if (emsha::EMSHA_ROK != runHMACTest(*(tests + i), label)) {
+		if (emsha::EMSHAResult::OK != runHMACTest(*(tests + i), label)) {
 			return -1;
 		}
 	}
@@ -146,28 +146,28 @@ runHMACTests(const struct hmacTest *tests, size_t nTests, const string& label)
 }
 
 
-emsha::EMSHA_RESULT
+emsha::EMSHAResult
 runHashTest(const struct hashTest& test, const string& label)
 {
-	emsha::SHA256		ctx;
-	emsha::EMSHA_RESULT	res;
-	uint8_t			dig[emsha::SHA256_HASH_SIZE];
+	emsha::SHA256      ctx;
+	emsha::EMSHAResult res;
+	uint8_t            dig[emsha::SHA256_HASH_SIZE];
 	string			hs;
 
 	res = ctx.Update((uint8_t *)test.input.c_str(), test.input.size());
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		goto exit;
 	}
 
 	for (uint32_t n = 0; n < RESULT_ITERATIONS; n++) {
 		res = ctx.Result(dig);
-		if (emsha::EMSHA_ROK != res) {
+		if (emsha::EMSHAResult::OK != res) {
 			goto exit;
 		}
 
 		DumpHexString(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
-			res = emsha::EMSHA_TEST_FAILURE;
+			res = emsha::EMSHAResult::TestFailure;
 			goto exit;
 		}
 		memset(dig, 0, emsha::SHA256_HASH_SIZE);
@@ -177,28 +177,28 @@ runHashTest(const struct hashTest& test, const string& label)
 	ctx.Reset();
 
 	res = ctx.Update((uint8_t *)test.input.c_str(), test.input.size());
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		goto exit;
 	}
 
 	for (uint32_t n = 0; n < RESULT_ITERATIONS; n++) {
 		res = ctx.Result(dig);
-		if (emsha::EMSHA_ROK != res) {
+		if (emsha::EMSHAResult::OK != res) {
 			goto exit;
 		}
 
 		DumpHexString(hs, dig, emsha::SHA256_HASH_SIZE);
 		if (hs != test.output) {
-			res = emsha::EMSHA_TEST_FAILURE;
+			res = emsha::EMSHAResult::TestFailure;
 			goto exit;
 		}
 		memset(dig, 0, emsha::SHA256_HASH_SIZE);
 	}
 
 	// Test that the single-pass function works.
-	res = emsha::sha256Digest((uint8_t *) test.input.c_str(),
+	res = emsha::SHA256Digest((uint8_t *) test.input.c_str(),
 				  test.input.size(), dig);
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		cerr << "(running single pass function test)\n";
 		goto exit;
 	}
@@ -206,14 +206,14 @@ runHashTest(const struct hashTest& test, const string& label)
 	DumpHexString(hs, dig, emsha::SHA256_HASH_SIZE);
 	if (hs != test.output) {
 		cerr << "(comparing single pass function output)\n";
-		res = emsha::EMSHA_TEST_FAILURE;
+		res = emsha::EMSHAResult::TestFailure;
 		goto exit;
 	}
 	memset(dig, 0, emsha::SHA256_HASH_SIZE);
-	res = emsha::EMSHA_ROK;
+	res = emsha::EMSHAResult::OK;
 
 exit:
-	if (emsha::EMSHA_ROK != res) {
+	if (emsha::EMSHAResult::OK != res) {
 		cerr << "FAILED: " << label << endl;
 		cerr << "\tinput: '" << test.input << "'" << endl;
 		cerr << "\twanted: " << test.output << endl;
@@ -227,7 +227,7 @@ int
 runHashTests(const struct hashTest *tests, const size_t ntests, const string& label)
 {
 	for (uint32_t i = 0; i < ntests; i++) {
-		if (emsha::EMSHA_ROK != runHashTest(*(tests + i), label)) {
+		if (emsha::EMSHAResult::OK != runHashTest(*(tests + i), label)) {
 			return -1;
 		}
 	}

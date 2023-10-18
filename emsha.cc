@@ -55,10 +55,13 @@ HashEqual(const uint8_t *a, const uint8_t *b)
 
 
 #ifndef EMSHA_NO_HEXSTRING
+
+
+namespace {
 #ifndef EMSHA_NO_HEXLUT
 // If using a lookup table is permitted, then the faster way to do this
 // is to use one.
-static void
+void
 writeHexChar(uint8_t *dest, uint8_t src)
 {
 	static constexpr uint8_t lut[256][3] = {
@@ -106,7 +109,7 @@ writeHexChar(uint8_t *dest, uint8_t src)
 // memory constraints, we'll work around this using a small (16-byte)
 // lookup table and some bit shifting. On platforms where even this is
 // too much, the HexString functionality will just be disabled.
-static void
+void
 writeHexChar(uint8_t *dest, uint8_t src)
 {
 	static constexpr uint8_t	lut[] = {
@@ -118,6 +121,7 @@ writeHexChar(uint8_t *dest, uint8_t src)
 	*(dest + 1) = lut[(src & 0xF)];
 }
 #endif // #ifndef EMSHA_NO_HEXLUT
+} // anonymous namespace for writeHexChar
 
 
 void

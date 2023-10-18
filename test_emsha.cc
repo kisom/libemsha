@@ -23,14 +23,18 @@
  */
 
 
+#include <chrono>
 #include <iostream>
-
 #include <emsha/emsha.h>
 
 #include "test_utils.h"
 
 
 using namespace std;
+
+
+// how many test runs to benchmark hex strings?
+static constexpr auto testIterations = 32768;
 
 
 #ifndef EMSHA_NO_HEXSTRING
@@ -49,19 +53,11 @@ hexStringTest()
 	emsha::HexString(out, buf, emsha::SHA256_HASH_SIZE);
 	string const outs(reinterpret_cast<const char *>(out));
 	if (outs != expected) {
-		cerr << "FAILED: HexString" << endl;
-		cerr << "\twanted: " << expected << endl;
-		cerr << "\thave:   " << out << endl;
+		cerr << "FAILED: HexString\n";
+		cerr << "\twanted: " << expected << "\n";
+		cerr << "\thave:   " << out << "\n";
 		exit(1);
 	}
-
-	cout << "PASSED: HexString ";
-#ifdef EMSHA_NO_HEXLUT
-	cout << "(small LUT)";
-#else // #ifdef EMSHA_NO_HEXLUT
-	cout << "(large LUT)";
-#endif // #ifdef EMSHA_NO_HEXLUT
-	cout << endl;
 }
 #endif // #ifndef EMSHA_NO_HEXSTRING
 
@@ -84,9 +80,9 @@ hashEqualTest()
 		cerr << "FAILED: HashEqual\n";
 		cerr << "\tHashEqual should have succeeded comparing a and b.\n";
 		DumpHexString(s, a, emsha::SHA256_HASH_SIZE);
-		cerr << "\ta <- " << s << std::endl;
+		cerr << "\ta <- " << s << "\n";
 		DumpHexString(s, b, emsha::SHA256_HASH_SIZE);
-		cerr << "\tb <- " << s << std::endl;
+		cerr << "\tb <- " << s << "\n";
 		exit(1);
 	}
 
@@ -100,9 +96,9 @@ hashEqualTest()
 		cerr << "FAILED: HashEqual\n";
 		cerr << "\tHashEqual should not have succeeded comparing a and b.\n";
 		DumpHexString(s, a, emsha::SHA256_HASH_SIZE);
-		cerr << "\ta <- " << s << std::endl;
+		cerr << "\ta <- " << s << "\n";
 		DumpHexString(s, b, emsha::SHA256_HASH_SIZE);
-		cerr << "\tb <- " << s << std::endl;
+		cerr << "\tb <- " << s << "\n";
 		exit(1);
 	}
 
@@ -126,17 +122,33 @@ hashEqualTest()
 		cerr << "\tb <- " << s << std::endl;
 		exit(1);
 	}
-
-
-	cout << "PASSED: HashEqual\n";
 }
 
 
 int
 main()
 {
+	auto start = std::chrono::steady_clock::now();
+	std::string testLabel;
+
+	for (auto i = 0; i < testIterations; i++) {
 #ifndef EMSHA_NO_HEXSTRING
-	hexStringTest();
+#ifndef EMSHA_NO_HEXLUT
+		testLabel = "(large LUT) ";
 #endif
-	hashEqualTest();
+		hexStringTest();
+#endif
+		hashEqualTest();
+	}
+
+	auto end   = std::chrono::steady_clock::now();
+	auto delta = (end - start);
+
+	std::cout << "Passed HexString " << testLabel << "tests.\n";
+	std::cout << "Total time: "
+		  << std::chrono::duration<double, std::milli>(delta).count()
+		  << " ms\n";
+	std::cout << "Average over " << testIterations << " tests: "
+		  << std::chrono::duration<double, std::nano>(delta).count() / testIterations
+		  << " ns\n";
 }

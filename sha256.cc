@@ -69,13 +69,13 @@ static constexpr uint32_t emsha256H0[] = {
 };
 
 
-EMSHA_RESULT
-sha256Digest(const uint8_t *m, uint32_t ml, uint8_t *d)
+EMSHAResult
+SHA256Digest(const uint8_t *m, uint32_t ml, uint8_t *d)
 {
-	SHA256       h;
-	EMSHA_RESULT ret;
+	SHA256      h;
+	EMSHAResult ret = EMSHAResult::Unknown;
 
-	if (EMSHA_ROK != (ret = h.Update(m, ml))) {
+	if (EMSHAResult::OK != (ret = h.Update(m, ml))) {
 		return ret;
 	}
 
@@ -92,33 +92,35 @@ SHA256::SHA256()
 
 SHA256::~SHA256()
 {
-	memset(this->mb, 0, SHA256_MB_SIZE);
+	for (auto i = static_cast<uint32_t>(0); i < SHA256_MB_SIZE; i++) {
+		this->mb[i] = static_cast<uint8_t>(0);
+	}
 }
 
 
-EMSHA_RESULT
+EMSHAResult
 SHA256::addLength(const uint32_t l)
 {
-	uint32_t        tmp = this->mlen + l;
+	EMSHAResult res = EMSHAResult::InputTooLong;;
 
-	if (tmp < this->mlen) {
-		return SHA256_INPUT_TOO_LONG;
+	uint32_t const tmp = static_cast<uint32_t>(this->mlen) + l;
+	if (tmp >= this->mlen) {
+		this->mlen = tmp;
+		assert(this->mlen > 0);
+		res = EMSHAResult::OK;
 	}
 
-	this->mlen = tmp;
-	assert(this->mlen > 0);
-
-	return EMSHA_ROK;
+	return res;
 }
 
 
-EMSHA_RESULT
+EMSHAResult
 SHA256::Reset()
 {
 	return this->reset();
 }
 
-EMSHA_RESULT
+EMSHAResult
 SHA256::reset()
 {
 	// The message block is set to the initial hash vector.
@@ -132,29 +134,47 @@ SHA256::reset()
 	this->i_hash[7] = emsha256H0[7];
 
 	this->mbi       = 0;
-	this->hStatus   = EMSHA_ROK;
+	this->hStatus   = EMSHAResult::OK;
 	this->hComplete = 0;
 	this->mlen      = 0;
-	memset(this->mb, 0, SHA256_MB_SIZE);
+
+	std::fill(this->mb.begin(), this->mb.end(), 0);
 
 	return this->hStatus;
 }
 
 
-// Read 32 bits from the byte buffer chunk as an unsigned 32-bit integer.
-static uint32_t
-chunkToUint32(const uint8_t *chunk)
+uint32_t
+SHA256::chunkToUint32(uint32_t offset)
 {
-	return ((*chunk) << 24) |
-	       ((*(chunk + 1)) << 16) |
-	       ((*(chunk + 2)) << 8) |
-	       (*(chunk + 3));
+	uint32_t chunk = 0;
+
+	for (uint32_t i = offset; i < offset+4; i++) {
+		chunk <<= 8;
+		chunk += static_cast<uint32_t>(this->mb[i]);
+	}
+
+	return chunk;
 }
 
 
-// Copy an unsigned 32-bit integer into the start of the byte buffer chunk.
+uint32_t
+SHA256::uint32ToChunk(uint32_t offset)
+{
+	uint32_t chunk = 0;
+
+	for (uint32_t i = offset; i < offset+4; i++) {
+		chunk <<= 8;
+		chunk += static_cast<uint32_t>(this->mb[i]);
+	}
+
+	return chunk;
+
+}
+
+
 static void
-uint32ToChunk(uint32_t x, uint8_t *chunk)
+uint32ToChunkInPlace(uint32_t x, uint8_t *chunk)
 {
 	chunk[0] = (x & 0xff000000) >> 24;
 	chunk[1] = (x & 0x00ff0000) >> 16;
@@ -180,7 +200,7 @@ SHA256::updateMessageBlock()
 	uint32_t h     = 0;
 
 	while (i < 16) {
-		w[i++] = chunkToUint32(this->mb + chunk);
+		w[i++] = this->chunkToUint32(chunk);
 		chunk += 4;
 	}
 	this->mbi = 0;
@@ -225,36 +245,36 @@ SHA256::updateMessageBlock()
 }
 
 
-EMSHA_RESULT
-SHA256::Update(const uint8_t *m, uint32_t ml)
+EMSHAResult
+SHA256::Update(const std::uint8_t *message, std::uint32_t messageLength)
 {
 	// Checking invariants:
 	// If the message length is zero, there's nothing to be done.
-	if (0 == ml) { return EMSHA_ROK; }
+	if (0 == messageLength) { return EMSHAResult::OK; }
 
 	// The message passed in cannot be the null pointer if the
 	// message length is greater than 0.
-	if (nullptr == m) { return EMSHA_NULLPTR; }
+	if (message == nullptr) { return EMSHAResult::NullPointer; }
 
 	// If the SHA256 object is in a bad state, don't proceed.
-	if (EMSHA_ROK != this->hStatus) { return this->hStatus; }
+	if (this->hStatus != EMSHAResult::OK) { return this->hStatus; }
 
 	// If the hash has been finalised, don't proceed.
-	if (0 != this->hComplete) { return EMSHA_INVALID_STATE; }
+	if (this->hComplete != static_cast<uint8_t>(0)) { return EMSHAResult::InvalidState; }
 	// Invariants satisfied by here.
 
-	for (uint32_t i = 0; i < ml; i++) {
-		this->mb[this->mbi] = *(m + i);
+	for (uint32_t i = 0; i < messageLength; i++) {
+		this->mb[this->mbi] = *(message + i);
 		mbi++;
 
-		if (EMSHA_ROK == this->addLength(8)) {
+		if (EMSHAResult::OK == this->addLength(8)) {
 			if (SHA256_MB_SIZE == this->mbi) {
 				this->updateMessageBlock();
 
 				// Assumption: following the message block
 				// write, the context should still be in a good
 				// state.
-				assert(EMSHA_ROK == this->hStatus);
+				assert(EMSHAResult::OK == this->hStatus);
 			}
 		}
 	}
@@ -267,7 +287,7 @@ inline void
 SHA256::padMessage(uint8_t pc)
 {
 	// Assumption: the context is not in a corrupted state.
-	assert(EMSHA_ROK == this->hStatus);
+	assert(EMSHAResult::OK == this->hStatus);
 
 	if (this->mbi < (SHA256_MB_SIZE - 8)) {
 		this->mb[this->mbi++] = pc;
@@ -290,7 +310,7 @@ SHA256::padMessage(uint8_t pc)
 
 		// Assumption: updating the message block has not left the
 		// context in a corrupted state.
-		assert(EMSHA_ROK == this->hStatus);
+		assert(EMSHAResult::OK == this->hStatus);
 	}
 
 	while (this->mbi < (SHA256_MB_SIZE - 8)) {
@@ -320,76 +340,76 @@ SHA256::padMessage(uint8_t pc)
 
 	// Assumption: updating the message block has not left the context in a
 	// corrupted state.
-	assert(EMSHA_ROK == this->hStatus);
+	assert(EMSHAResult::OK == this->hStatus);
 }
 
 
-EMSHA_RESULT
-SHA256::Finalise(uint8_t *d)
+EMSHAResult
+SHA256::Finalise(std::uint8_t *digest)
 {
 	// Check invariants.
 	// The digest cannot be a null pointer; this library allocates
 	// no memory of its own.
-	if (nullptr == d) { return EMSHA_NULLPTR; }
+	if (nullptr == digest) { return EMSHAResult::NullPointer; }
 
 	// If the SHA256 object is in a bad state, don't proceed.
-	if (EMSHA_ROK != this->hStatus) { return this->hStatus; }
+	if (EMSHAResult::OK != this->hStatus) { return this->hStatus; }
 
 	// If the hash has been finalised, don't proceed.
-	if (0 != this->hComplete) { return EMSHA_INVALID_STATE; }
+	if (0 != this->hComplete) { return EMSHAResult::InvalidState; }
 	// Invariants satisfied by here.
 
 	this->padMessage(0x80);
 
 	// Assumption: padding the message block has not left the context in a
 	// corrupted state.
-	assert(EMSHA_ROK == this->hStatus);
-	std::fill(this->mb, this->mb + SHA256_MB_SIZE, 0);
+	assert(EMSHAResult::OK == this->hStatus);
+	std::fill(this->mb.begin(), this->mb.end(), 0);
 
 	this->hComplete = 1;
 	this->mlen      = 0;
 
-	uint32ToChunk(this->i_hash[0], d);
-	uint32ToChunk(this->i_hash[1], d + 4);
-	uint32ToChunk(this->i_hash[2], d + 8);
-	uint32ToChunk(this->i_hash[3], d + 12);
-	uint32ToChunk(this->i_hash[4], d + 16);
-	uint32ToChunk(this->i_hash[5], d + 20);
-	uint32ToChunk(this->i_hash[6], d + 24);
-	uint32ToChunk(this->i_hash[7], d + 28);
+	uint32ToChunkInPlace(this->i_hash[0], digest);
+	uint32ToChunkInPlace(this->i_hash[1], digest + 4);
+	uint32ToChunkInPlace(this->i_hash[2], digest + 8);
+	uint32ToChunkInPlace(this->i_hash[3], digest + 12);
+	uint32ToChunkInPlace(this->i_hash[4], digest + 16);
+	uint32ToChunkInPlace(this->i_hash[5], digest + 20);
+	uint32ToChunkInPlace(this->i_hash[6], digest + 24);
+	uint32ToChunkInPlace(this->i_hash[7], digest + 28);
 
-	return EMSHA_ROK;
+	return EMSHAResult::OK;
 }
 
 
-EMSHA_RESULT
-SHA256::Result(uint8_t *d)
+EMSHAResult
+SHA256::Result(std::uint8_t *digest)
 {
 	// Check invariants.
 
 	// The digest cannot be a null pointer; this library allocates
 	// no memory of its own.
-	if (nullptr == d) { return EMSHA_NULLPTR; }
+	if (nullptr == digest) { return EMSHAResult::NullPointer; }
 
 	// If the SHA256 object is in a bad state, don't proceed.
-	if (EMSHA_ROK != this->hStatus) { return this->hStatus; }
+	if (EMSHAResult::OK != this->hStatus) { return this->hStatus; }
 
 	// Invariants satisfied by here.
 
 	if (this->hComplete == 0U) {
-		return this->Finalise(d);
+		return this->Finalise(digest);
 	}
 
-	uint32ToChunk(this->i_hash[0], d);
-	uint32ToChunk(this->i_hash[1], d + 4);
-	uint32ToChunk(this->i_hash[2], d + 8);
-	uint32ToChunk(this->i_hash[3], d + 12);
-	uint32ToChunk(this->i_hash[4], d + 16);
-	uint32ToChunk(this->i_hash[5], d + 20);
-	uint32ToChunk(this->i_hash[6], d + 24);
-	uint32ToChunk(this->i_hash[7], d + 28);
+	uint32ToChunkInPlace(this->i_hash[0], digest);
+	uint32ToChunkInPlace(this->i_hash[1], digest + 4);
+	uint32ToChunkInPlace(this->i_hash[2], digest + 8);
+	uint32ToChunkInPlace(this->i_hash[3], digest + 12);
+	uint32ToChunkInPlace(this->i_hash[4], digest + 16);
+	uint32ToChunkInPlace(this->i_hash[5], digest + 20);
+	uint32ToChunkInPlace(this->i_hash[6], digest + 24);
+	uint32ToChunkInPlace(this->i_hash[7], digest + 28);
 
-	return EMSHA_ROK;
+	return EMSHAResult::OK;
 }
 
 
@@ -426,22 +446,22 @@ static const uint8_t helloWorld[] = {
 
 constexpr uint32_t EMSHA_SELF_TEST_ITERS = 4;
 
-static EMSHA_RESULT
+static EMSHAResult
 runTest(const uint8_t *input, uint32_t input_len, const uint8_t *expected)
 {
-	uint8_t		    hexString[65]{0};
-	uint8_t             d[SHA256_HASH_SIZE]{0};
-	emsha::SHA256       ctx;
-	emsha::EMSHA_RESULT res;
+	uint8_t            hexString[65]{0};
+	uint8_t            d[SHA256_HASH_SIZE]{0};
+	emsha::SHA256      ctx;
+	emsha::EMSHAResult res;
 
 	res = ctx.Update(input, input_len);
-	if (EMSHA_ROK != res) {
+	if (EMSHAResult::OK != res) {
 		return res;
 	}
 
 	for (uint32_t n = 0; n < EMSHA_SELF_TEST_ITERS; n++) {
 		res = ctx.Result(d);
-		if (EMSHA_ROK != res) {
+		if (EMSHAResult::OK != res) {
 			return res;
 		}
 
@@ -451,24 +471,24 @@ runTest(const uint8_t *input, uint32_t input_len, const uint8_t *expected)
 				std::cerr << "[!] have: " << hexString << "\n";
 				HexString(hexString, const_cast<uint8_t *>(helloWorld), 32);
 				std::cerr << "[!] want: " << hexString << "\n";
-				return EMSHA_TEST_FAILURE;
+				return EMSHAResult::TestFailure;
 			}
 		}
 	}
 
-	return EMSHA_ROK;
+	return EMSHAResult::OK;
 }
 
 
-EMSHA_RESULT
-sha256SelfTest()
+EMSHAResult
+SHA256SelfTest()
 {
-	EMSHA_RESULT res;
+	EMSHAResult res;
 
 	res = runTest(reinterpret_cast<const uint8_t *>(""), 0, emptyVector);
-	if (EMSHA_ROK == res) {
+	if (EMSHAResult::OK == res) {
 		res = runTest(reinterpret_cast<const uint8_t *>("hello, world"), 12, helloWorld);
-		if (res != EMSHA_ROK) {
+		if (res != EMSHAResult::OK) {
 			std::cerr << "[!] failed on hello, world.\n";
 		}
 	} else {
@@ -480,10 +500,10 @@ sha256SelfTest()
 
 
 #else // #ifdef EMSHA_NO_SELFTEST
-EMSHA_RESULT
+EMSHAResult
 sha256_self_test()
 {
-	return EMSHA_SELFTEST_DISABLED;
+	return EMSHAResult::SelfTestDisabled;
 }
 
 

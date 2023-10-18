@@ -34,184 +34,160 @@
 #include <cstdint>
 
 #include <emsha/emsha.h>
+#include <array>
 
 
 namespace emsha {
 
 
-// SHA256_MB_SIZE is the size of a message block.
+/// SHA256_MB_SIZE is the size of a message block.
 const uint32_t SHA256_MB_SIZE = 64;
 
 class SHA256 : Hash {
 public:
-	// A SHA256 context does not need any special
-	// construction. It can be declared and
-	// immediately start being used.
+	/// \brief A SHA256 context does not need any special
+	///        construction.
+	///
+	/// It can be declared and immediately start being used.
 	SHA256();
 
-	// The SHA256 destructor will clear out its internal
-	// message buffer; all the members are local and
-	// not resource handles, so cleanup is minimal.
+	/// The SHA256 destructor will clear out its internal
+	/// message buffer; all the members are local and
+	/// not resource handles, so cleanup is minimal.
 	~SHA256();
 
-	// reset clears the internal state of the SHA256
-	// context and returns it to its initial state.
-	// It should always return EMSHA_ROK.
-	EMSHA_RESULT Reset() override;
+	/// \brief Clear the internal state of the SHA256 context,
+	///        returning it to its initial state.
+	///
+	/// \return This should always return EMSHAResult::OK.
+	EMSHAResult Reset() override;
 
-	// update writes data into the context. While
-	// there is an upper limit on the size of data
-	// that SHA-256 can operate on, this package is
-	// designed for small systems that will not
-	// approach that level of data (which is on the
-	// order of 2 exabytes), so it is not thought
-	// to be a concern.
-	//
-	// Inputs:
-	//     m: a byte array containing the message to
-	//     be written. It must not be NULL (unless
-	//     the message length is zero).
-	//
-	//     ml: the message length, in bytes.
-	//
-	// Outputs:
-	//     EMSHA_NULLPTR is returned if m is NULL
-	//     and ml is nonzero.
-	//
-	//     EMSHA_INVALID_STATE is returned if the
-	//     update is called after a call to
-	//     finalize.
-	//
-	//     SHA256_INPUT_TOO_LONG is returned if too
-	//     much data has been written to the
-	//     context.
-	//
-	//     EMSHA_ROK is returned if the data was
-	//     successfully added to the SHA-256
-	//     context.
-	//
-	EMSHA_RESULT Update(const uint8_t *m, uint32_t ml) override;
+	/// \brief Writes data into the SHA256.
+	///
+	/// While there is an upper limit on the size of data that
+	/// SHA-256 can operate on, this package is designed for small
+	/// systems that will not approach that level of data (which is
+	/// on the order of 2 exabytes), so it is not thought to be a
+	/// concern.
+	///
+	/// \param message A byte array containing the message to be
+	///                written. It must not be NULL (unless the
+	///                message length is zero).
+	/// \param messageLength The message length, in bytes.
+	/// \return An ::EMSHAResult describing the result of the
+	///         operation.
+	///
+	///         - EMSHAResult::NullPointer is returned if m is a
+	///           nullptr and ml is nonzero.
+	///         - EMSHAResult::InvalidState is returned if the
+	///           update is called after a call to finalize.
+	///         - EMSHAResult::InputTooLong is returned if too much
+	///           data has been written to the context.
+	///         - EMSHAResult::OK is returned if the data was
+	///           successfully added to the SHA-256 context.
+	EMSHAResult Update(const std::uint8_t *message, std::uint32_t messageLength) override;
 
-	// Finalise completes the digest. Once this
-	// method is called, the context cannot be
-	// updated unless the context is reset.
-	//
-	// Inputs:
-	//     d: a byte buffer that must be at least
-	//     SHA256.size() in length.
-	//
-	// Outputs:
-	//     EMSHA_NULLPTR is returned if d is the
-	//     null pointer.
-	//
-	//     EMSHA_INVALID_STATE is returned if the
-	//     SHA-256 context is in an invalid state,
-	//     such as if there were errors in previous
-	//     updates.
-	//
-	//     EMSHA_ROK is returned if the context was
-	//     successfully finalised and the digest
-	//     copied to d.
-	//
-	EMSHA_RESULT Finalise(uint8_t *d) override;
+	/// \brief Complete the digest.
+	///
+	/// Once this method is called, the context cannot be updated
+	/// unless the context is reset.
+	///
+	/// \param digest byte buffer that must be at least
+	///               SHA256.size() in length.
+	/// \return An ::EMSHAResult describing the result of the
+	///         operation.
+	///
+	///         - EMSHAResult::NullPointer is returned if a nullptr
+	///           is passed in.
+	///         - EMSHAResult::InvalidState is returned if the
+	///           SHA-256 context is in an invalid state, such as
+	///           if there were errors in previous updates.
+	///         - EMSHAResult::OK is returned if the context was
+	///           successfully finalised and the digest copied to
+	///           digest.
+	EMSHAResult Finalise(std::uint8_t *digest) override;
 
-	// result copies the result from the SHA-256
-	// context into the buffer pointed to by d,
-	// running Finalise if needed. Once called,
-	// the context cannot be updated until the
-	// context is reset.
-	//
-	// Inputs:
-	//     d: a byte buffer that must be at least
-	//     SHA256.size() in length.
-	//
-	// Outputs:
-	//     EMSHA_NULLPTR is returned if d is the
-	//     null pointer.
-	//
-	//     EMSHA_INVALID_STATE is returned if the
-	//     SHA-256 context is in an invalid state,
-	//     such as if there were errors in previous
-	//     updates.
-	//
-	//     EMSHA_ROK is returned if the context was
-	//     successfully finalised and the digest
-	//     copied to d.
-	//
-	EMSHA_RESULT Result(uint8_t *d) override;
+	/// \brief Copy the result from the SHA-256
+	/// context into the buffer pointed to by d,
+	/// running #Finalise if needed. Once called,
+	/// the context cannot be updated until the
+	/// context is reset.
+	///
+	/// \param digest A byte buffer that must be at least
+	///               SHA256.size() in length.
+	/// \return An ::EMSHAResult describing the result of the
+	///         operation.
+	///
+	///         - EMSHAResult::NullPointer is returned if a nullptr
+	///           is passed in.
+	///         - EMSHAResult::InvalidState is returned if the
+	///           SHA-256 context is in an invalid state, such as
+	///           if there were errors in previous updates.
+	///         - EMSHAResult::OK is returned if the context was
+	///           successfully finalised and the digest copied to
+	///           digest.
+	EMSHAResult Result(std::uint8_t *digest) override;
 
-	// size returns the output size of SHA256, e.g.
-	// the size that the buffers passed to finalize
-	// and result should be.
-	//
-	// Outputs:
-	//     a uint32_t representing the expected size
-	//     of buffers passed to result and finalize.
+	/// \brief Returns the output size of SHA-256.
+	///
+	/// The buffers passed to #Update and #Finalise should be at
+	/// least this size.
+	///
+	/// \return The expected size of buffers passed to result and
+	///         finalize.
 	std::uint32_t Size() override;
 
 private:
-	// mlen stores the current message length.
-	uint64_t mlen;
-
-	// The intermediate hash is 8x 32-bit blocks.
-	uint32_t i_hash[8];
+	uint64_t mlen; // Current message length.
+	uint32_t i_hash[8]; // The intermediate hash is 8x 32-bit blocks.
 
 	// hStatus is the hash status, and hComplete indicates
 	// whether the hash has been finalised.
-	EMSHA_RESULT hStatus;
-	uint8_t      hComplete;
+	EMSHAResult hStatus;
+	uint8_t     hComplete;
 
 	// mb is the message block, and mbi is the message
 	// block index.
 	uint8_t mbi;
-	uint8_t mb[SHA256_MB_SIZE];
+	std::array<uint8_t, SHA256_MB_SIZE> mb;
 
-	inline EMSHA_RESULT addLength(const uint32_t);
-	inline void updateMessageBlock(void);
-	inline void padMessage(uint8_t pc);
-	EMSHA_RESULT reset();
+	inline EMSHAResult	addLength(const uint32_t);
+	inline void  		updateMessageBlock(void);
+	inline void  		padMessage(uint8_t pc);
+	uint32_t     		chunkToUint32(uint32_t offset);
+	uint32_t     		uint32ToChunk(uint32_t offset);
+	EMSHAResult		reset();
 }; // end class SHA256
 
-// sha256Digest performs a single pass hashing of the message
-// passed in.
-//
-// Inputs:
-//     m: byte buffer containing the message to hash.
-//
-//     ml: the length of m.
-//
-//     d: byte buffer that will be used to store the resulting
-//     hash; it should have at least emsha::SHA256_HASH_SIZE
-//     bytes available.
-//
-// Outputs:
-//     This function handles setting up a SHA256 context, calling
-//     update using the message data, and then calling finalize. Any
-//     of the errors that can occur in those functions can be
-//     returned here, or EMSHA_ROK if the digest was computed
-//     successfully.
-//
-EMSHA_RESULT
-sha256Digest(const uint8_t *m, uint32_t ml, uint8_t *d);
 
-// sha256SelfTest runs through two test cases to ensure that the
-// SHA-256 functions are working correctly.
-//
-// Outputs:
-//     EMSHA_ROK is returned if the self tests pass.
-//
-//     EMSHA_SELFTEST_DISABLED is returned if the self tests
-//     have been disabled (e.g., libemsha was compiled with the
-//     EMSHA_NO_SELFTEST #define).
-//
-//     If a fault occurred inside the SHA-256 code, the error
-//     code from one of the update, finalize, result, or reset
-//     methods is returned.
-//
-//     If the fault is that the output does not match the test
-//     vector, EMSHA_TEST_FAILURE is returned.
-EMSHA_RESULT
-sha256SelfTest(void);
+/// \brief SHA256Digest performs a single pass hashing of the message
+///        passed in.
+///
+/// \param m Byte buffer containing the message to hash.
+/// \param ml The length of m.
+/// \param d Byte buffer that will be used to store the resulting hash;
+///          it should have at least emsha::SHA256_HASH_SIZE bytes
+///          available.
+/// \return An ::EMSHAResult describing the result of the operation.
+EMSHAResult SHA256Digest(const uint8_t *m, uint32_t ml, uint8_t *d);
+
+/// \brief SHA256SelfTest runs through two test cases to ensure that the
+///        SHA-256 functions are working correctly.
+///
+/// \return The result of the self-test.
+///
+///         - EMSHAResult::OK is returned if the self tests pass.
+///         - EMSHAResult::SelfTestDisabled is returned if the self
+///           tests have been disabled (e.g., libemsha was compiled
+///           with the EMSHA_NO_SELFTEST #define).
+///         - If a fault occurred inside the SHA-256 code, the error
+///           code from one of the update, finalize, result, or reset
+///           methods is returned.
+///         - If the fault is that the output does not match the test
+///           vector, EMSHAResult::TestFailure is returned.
+EMSHAResult SHA256SelfTest();
+
+
 } // end of namespace emsha
 
 
